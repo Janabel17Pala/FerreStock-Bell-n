@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Inventario | FerreStock Bellon</title>
+
+<style>
+:root{
+    --oscuro:#1f1f1f;
+    --medio:#2b2b2b;
+    --naranja:#df7d06;
+    --texto:#ffffff;
+    --rojo:#c0392b;
+    --azul:#2980b9;
+}
+
+*{
+    box-sizing:border-box;
+    font-family:Segoe UI, Arial, sans-serif;
+    color:var(--texto);
+}
+
+body{
+    margin:0;
+    background:var(--oscuro);
+    padding-top:90px;
+}
+
+/* HEADER */
+header{
+    position:fixed;
+    top:0;
+    width:100%;
+    background:#1b1b1b;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:15px 50px;
+    border-bottom:3px solid var(--naranja);
+    z-index:100;
+}
+
+header h1{
+    margin:0;
+    color:var(--naranja);
+}
+
+nav{
+    display:flex;
+    align-items:center;
+}
+
+nav a, nav span{
+    margin-left:25px;
+    text-decoration:none;
+    font-weight:600;
+    cursor:pointer;
+    color: #fff; /* Aseguramos que el texto sea blanco */
+}
+
+nav a:hover{
+    color:var(--naranja);
+}
+
+/* Estilo para enlace activo en el menú */
+nav a.activo{
+    color:var(--naranja);
+    font-weight:700;
+    border-bottom:3px solid var(--naranja);
+    padding-bottom:5px;
+}
+
+#bienvenida{
+    color:var(--naranja);
+}
+
+#inventarioLink, #stockLink, #productosLink, #informesLink{
+    display:none;
+}
+
+/* CONTENIDO */
+.container{
+    padding:40px;
+}
+
+h1{
+    color:var(--naranja);
+}
+
+button{
+    padding:10px 15px;
+    border:none;
+    border-radius:6px;
+    cursor:pointer;
+    font-weight:600;
+    color: white;
+}
+
+.btn-add{ background:var(--naranja); }
+.btn-edit{ background:var(--azul); }
+.btn-delete{ background:var(--rojo); }
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    margin-top:20px;
+    background:var(--medio);
+    border-radius:10px;
+    overflow:hidden;
+}
+
+th, td{
+    padding:14px;
+    text-align:center;
+}
+
+th{
+    background:#191919;
+    color:var(--naranja);
+}
+
+tr:nth-child(even){
+    background:#252525;
+}
+
+/* MODAL */
+.modal{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.7);
+    display:none;
+    align-items:center;
+    justify-content:center;
+    z-index: 1000;
+}
+
+.modal-content{
+    background:#262626;
+    padding:30px;
+    width:380px;
+    border-radius:12px;
+}
+
+.modal-content h2{
+    color:var(--naranja);
+    margin-top: 0;
+}
+
+input{
+    width:100%;
+    padding:10px;
+    margin-bottom:15px;
+    background:#333;
+    border:1px solid #444;
+    border-radius:6px;
+    color: white;
+}
+
+/* Estilos para inputs deshabilitados */
+input:disabled{
+    background:#222;
+    color:#999;
+    cursor:not-allowed;
+    border-color:#333;
+}
+
+label{
+    display:block;
+}
+
+
+.modal-actions{
+    display:flex;
+    gap:10px;
+}
+</style>
+</head>
+
+<body>
+
+<script>
+// Protección: solo admin puede acceder
+const role = localStorage.getItem('rol');
+if(role !== 'admin'){
+    alert('Acceso denegado. Solo administradores pueden acceder aquí.');
+    window.location.href = 'base.html';
+}
+</script>
+
+<header>
+    <h1 onclick="window.location.href='base.html'" style="cursor:pointer;">FerreStock Bellon</h1>
+    <nav>
+        <span id="bienvenida"></span>
+        <a onclick="window.location.href='base.html'">Inicio</a>
+        <a id="productosLink" href="productos.html">Productos</a>
+        <a id="stockLink" href="stock.html">Stock</a>
+        <a id="inventarioLink" href="inventario.html">Inventario</a>
+        <a id="informesLink" href="informes.html">Informes</a>
+        <a id="contactoLink" href="Contacto.html">Contacto</a>
+        <a id="loginLink" href="login.html">Iniciar sesión</a>
+        <a id="logoutLink" onclick="cerrarSesion()">Cerrar sesión</a>
+    </nav>
+</header>
+
+<div class="container">
+    <h1>Inventario General</h1>
+   
+
+    <table>
+        <thead>
+            <tr>
+                <th>Producto</th>
+                <th>Categoría</th>
+                <th>Ubicación</th>
+                <th>Cantidad</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody id="tablaInventario"></tbody>
+    </table>
+</div>
+
+<div class="modal" id="modal">
+    <div class="modal-content">
+        <h2 id="tituloModal">Ubicar Producto</h2>
+        <label style="font-size:12px; color:#bbb;">Producto (del stock)</label>
+        <input id="inpProducto" disabled placeholder="Nombre del producto">
+        <label style="font-size:12px; color:#bbb;">Categoría</label>
+        <input id="inpCategoria" disabled placeholder="Categoría">
+        <label style="font-size:12px; color:#bbb;">Cantidad disponible</label>
+        <input id="inpCantidad" type="number" disabled placeholder="Cantidad">
+        <label style="font-size:12px; color:#bbb;">Ubicación en almacén *</label>
+        <input id="inpUbicacion" placeholder="Dónde está ubicado este producto">
+
+        <div class="modal-actions">
+            <button class="btn-add" onclick="guardar()">Guardar</button>
+            <button class="btn-delete" onclick="cerrarModal()">Cancelar</button>
+        </div>
+    </div>
+</div>
+
+<script>
+// 1. SEGURIDAD Y MENÚ (Sincronizado con base.html)
+
+function updateMenuByRole(){
+    const role = localStorage.getItem('rol');
+    const loginLink = document.getElementById('loginLink');
+    const logoutLink = document.getElementById('logoutLink');
+    const bienvenida = document.getElementById('bienvenida');
+    const inventarioLink = document.getElementById('inventarioLink');
+    const stockLink = document.getElementById('stockLink');
+    const productosLink = document.getElementById('productosLink');
+    const informesLink = document.getElementById('informesLink');
+
+    // Protección: solo admin puede acceder
+    if(role !== 'admin'){
+        alert('Acceso denegado. Solo administradores pueden acceder aquí.');
+        window.location.href = 'base.html';
+        return;
+    }
+
+    // Admin ve todas las opciones
+    loginLink.style.display = 'none';
+    logoutLink.style.display = 'inline';
+    productosLink.style.display = 'inline';
+    stockLink.style.display = 'inline';
+    inventarioLink.style.display = 'inline';
+    informesLink.style.display = 'inline';
+    bienvenida.textContent = '¡Bienvenido admin!';
+}
+
+function cerrarSesion(){
+    localStorage.removeItem('sesionActiva');
+    localStorage.removeItem('mensajeLogin');
+    localStorage.removeItem('rol');
+    localStorage.removeItem('usuarioNombre');
+    window.location.href = 'base.html';
+}
+
+// Marca el enlace activo en el menú según la página actual
+function marcarPaginaActiva(){
+    // Obtener el nombre del archivo actual
+    const nombreArchivo = window.location.pathname.split('/').pop() || 'base.html';
+    const mapa = {
+        'base.html': 'inicio',
+        'productos.html': 'productosLink',
+        'stock.html': 'stockLink',
+        'inventario.html': 'inventarioLink',
+        'informes.html': 'informesLink',
+        'Contacto.html': 'contactoLink',
+        '': 'inicio' // En caso de ser raíz
+    };
+    
+    const enlaceActivo = mapa[nombreArchivo];
+    
+    // Remover clase activa de todos los enlaces
+    document.querySelectorAll('nav a').forEach(link => {
+        link.classList.remove('activo');
+    });
+    
+    // Agregar clase activa al enlace correspondiente
+    if(enlaceActivo){
+        const elemento = document.getElementById(enlaceActivo);
+        if(elemento){
+            elemento.classList.add('activo');
+        } else if(enlaceActivo === 'inicio'){
+            // Para el inicio, marcar el primer enlace o el que dice "Inicio"
+            const inicioLink = Array.from(document.querySelectorAll('nav a')).find(a => 
+                a.textContent.trim() === 'Inicio' || a.href.includes('base.html')
+            );
+            if(inicioLink) inicioLink.classList.add('activo');
+        }
+    }
+}
+
+// 2. CRUD INVENTARIO - Dependiente del Stock
+// El inventario registra dónde están ubicados los productos del stock
+let stock = JSON.parse(localStorage.getItem("stock")) || [];
+let inventario = JSON.parse(localStorage.getItem("inventario")) || [];
+let editIndex = null;
+
+const tablaInventario = document.getElementById("tablaInventario");
+const modal = document.getElementById("modal");
+
+// Dibuja la tabla con los productos del stock y su ubicación en inventario
+function render(){
+    tablaInventario.innerHTML = "";
+    
+    // Si no hay stock, mostrar mensaje
+    if(stock.length === 0){
+        tablaInventario.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:20px;">No hay productos en stock. Agrega primero en la sección Stock.</td></tr>`;
+        return;
+    }
+    
+    // Mostrar cada producto del stock con su ubicación en inventario
+    stock.forEach((producto, i) => {
+        // Buscar si este producto ya está en el inventario
+        const itemInventario = inventario.find(inv => inv.productoIndex === i);
+        
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+            <td>${producto.producto}</td>
+            <td>${producto.categoria}</td>
+            <td>${itemInventario ? itemInventario.ubicacion : '-'}</td>
+            <td>${producto.cantidad}</td>
+            <td>
+                <button class="btn-edit" onclick="editar(${i})">Ubicar</button>
+                ${itemInventario ? `<button class="btn-delete" onclick="eliminar(${i})">Limpiar</button>` : ''}
+            </td>
+        `;
+        tablaInventario.appendChild(tr);
+    });
+}
+
+// Abre el modal para ubicar un producto del stock
+function abrirModal(){
+    editIndex = null;
+    document.getElementById("tituloModal").textContent = "Ubicar Producto en Inventario";
+    limpiar();
+    modal.style.display = "flex";
+}
+
+// Cierra el modal sin guardar cambios
+function cerrarModal(){
+    modal.style.display = "none";
+}
+
+// Limpia los inputs del formulario
+function limpiar(){
+    document.getElementById("inpProducto").value = "";
+    document.getElementById("inpCategoria").value = "";
+    document.getElementById("inpUbicacion").value = "";
+    document.getElementById("inpCantidad").value = "";
+}
+
+// Guarda la ubicación de un producto en el inventario
+function guardar(){
+    // No permitir guardar sin seleccionar producto y ubicación
+    const ubicacion = document.getElementById("inpUbicacion").value.trim();
+    
+    if(!ubicacion){
+        alert("Por favor indica una ubicación");
+        return;
+    }
+    
+    if(editIndex === null){
+        alert("Selecciona un producto primero");
+        return;
+    }
+
+    // Buscar si ya existe en inventario
+    const existe = inventario.findIndex(inv => inv.productoIndex === editIndex);
+    
+    const item = {
+        productoIndex: editIndex,
+        producto: stock[editIndex].producto,
+        categoria: stock[editIndex].categoria,
+        ubicacion: ubicacion,
+        cantidad: stock[editIndex].cantidad
+    };
+
+    if(existe === -1){
+        // Nuevo registro
+        inventario.push(item);
+    } else {
+        // Actualizar ubicación
+        inventario[existe].ubicacion = ubicacion;
+    }
+
+    // Guardar en localStorage
+    localStorage.setItem("inventario", JSON.stringify(inventario));
+    cerrarModal();
+    render();
+}
+
+// Abre el modal para editar/ubicar un producto
+function editar(i){
+    if(stock.length === 0){
+        alert("No hay productos en stock");
+        return;
+    }
+    
+    editIndex = i;
+    const producto = stock[i];
+    const itemInventario = inventario.find(inv => inv.productoIndex === i);
+    
+    document.getElementById("inpProducto").value = producto.producto;
+    document.getElementById("inpProducto").disabled = true;
+    document.getElementById("inpCategoria").value = producto.categoria;
+    document.getElementById("inpCategoria").disabled = true;
+    document.getElementById("inpCantidad").value = producto.cantidad;
+    document.getElementById("inpCantidad").disabled = true;
+    document.getElementById("inpUbicacion").value = itemInventario ? itemInventario.ubicacion : "";
+    document.getElementById("inpUbicacion").disabled = false;
+    
+    document.getElementById("tituloModal").textContent = itemInventario ? "Editar Ubicación" : "Ubicar Producto";
+    modal.style.display = "flex";
+}
+
+// Elimina la ubicación de un producto del inventario
+function eliminar(i){
+    if(confirm("¿Limpiar ubicación de este producto?")){
+        inventario = inventario.filter(inv => inv.productoIndex !== i);
+        localStorage.setItem("inventario", JSON.stringify(inventario));
+        render();
+    }
+}
+
+// Iniciar página
+document.addEventListener('DOMContentLoaded', function(){
+    updateMenuByRole();
+    marcarPaginaActiva();
+    render();
+});
+</script>
+
+</body>
+</html>

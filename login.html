@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Login | FerreStock Bellon</title>
+
+<style>
+:root{
+    --oscuro:#1f1f1f;
+    --medio:#2b2b2b;
+    --naranja:#df7d06;
+    --texto:#ffffff;
+    --error:#c0392b;
+}
+
+*{
+    box-sizing:border-box;
+    font-family:Segoe UI, Arial, sans-serif;
+    color:var(--texto);
+}
+
+body{
+    margin:0;
+    height:100vh;
+    background:linear-gradient(rgba(0,0,0,.7),rgba(0,0,0,.7)),
+    url("https://www.kordata.it/mx/wp-content/uploads/sites/4/2023/12/ferreteria.png");
+    background-size:cover;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+
+.container{
+    background:#1b1b1b;
+    padding:35px;
+    width:380px;
+    border-radius:15px;
+    box-shadow:0 10px 25px rgba(0,0,0,.6);
+}
+
+h1{
+    text-align:center;
+    color:var(--naranja);
+    margin-bottom:20px;
+}
+
+input:not([type="checkbox"]){
+    width:100%;
+    padding:12px;
+    margin-bottom:15px;
+    background:#2b2b2b;
+    border:none;
+    border-radius:8px;
+    color:var(--texto);
+}
+
+/* Estilos para el checkbox de captcha */
+input[type="checkbox"]{
+    width:auto;
+    margin-right:10px;
+    margin-bottom:15px;
+    cursor:pointer;
+    accent-color:var(--naranja);
+}
+
+.captcha-container{
+    display:flex;
+    align-items:center;
+    margin-bottom:15px;
+    font-size:14px;
+}
+
+.captcha-container label{
+    margin:0;
+    cursor:pointer;
+}
+
+/* Contenedor del password con ícono */
+.password-container{
+    position:relative;
+    margin-bottom:15px;
+    display:flex;
+    align-items:center;
+}
+
+.password-container input{
+    margin-bottom:0;
+    width:100%;
+}
+
+.toggle-password{
+    position:absolute;
+    right:12px;
+    cursor:pointer;
+    background:none;
+    border:none;
+    color:#999;
+    padding:5px;
+    width:auto;
+    height:20px;
+    display:flex;
+    align-items:center;
+}
+
+.toggle-password:hover{
+    color:var(--naranja);
+    transition:color 0.2s;
+}
+
+button{
+    width:100%;
+    padding:12px;
+    background:var(--naranja);
+    border:none;
+    border-radius:8px;
+    font-weight:700;
+    cursor:pointer;
+}
+
+.toggle{
+    text-align:center;
+    margin-top:15px;
+    cursor:pointer;
+    color:#ccc;
+}
+
+.error{
+    color:var(--error);
+    text-align:center;
+    margin-bottom:10px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h1 id="titulo">Iniciar Sesión</h1>
+<div class="error" id="error"></div>
+
+<!-- LOGIN -->
+<div id="loginBox">
+    <input id="loginUser" placeholder="Usuario">
+    <div class="password-container">
+        <input id="loginPass" type="password" placeholder="Contraseña">
+        <button type="button" class="toggle-password" onclick="togglePassword()" id="toggleBtn"></button>
+    </div>
+    <div class="captcha-container">
+        <input id="captcha" type="checkbox">
+        <label for="captcha">No soy un robot</label>
+    </div>
+    <button onclick="login()">Entrar</button>
+</div>
+
+<!-- REGISTRO -->
+<div id="registroBox" style="display:none">
+    <input id="regNombre" placeholder="Nombre completo">
+    <input id="regUser" placeholder="Usuario">
+    <input id="regPass" type="password" placeholder="Contraseña">
+    <button onclick="registrar()">Registrarse</button>
+</div>
+
+<div class="toggle" onclick="toggleForm()">Regístrate</div>
+
+</div>
+
+<script>
+// Admin por defecto para que tenga acceso desde el inicio
+// Esto se guarda en localStorage del navegador
+let usuarios = JSON.parse(localStorage.getItem("usuarios")) || [];
+
+if (!usuarios.some(u => u.rol === "admin")) {
+    usuarios.push({
+        nombre: "Bellon@gmail.com",
+        user: "admin",
+        pass: "admin123",
+        rol: "admin"
+    });
+    localStorage.setItem("usuarios", JSON.stringify(usuarios));
+}
+
+let modoRegistro = false;
+
+// Alterna entre la pantalla de login y registro
+function toggleForm(){
+    modoRegistro = !modoRegistro;
+    error.textContent = "";
+
+    loginBox.style.display = modoRegistro ? "none" : "block";
+    registroBox.style.display = modoRegistro ? "block" : "none";
+    titulo.textContent = modoRegistro ? "Registro" : "Iniciar Sesión";
+
+    document.querySelector(".toggle").textContent =
+        modoRegistro ? "¿Ya tienes cuenta? Inicia sesión" : "Regístrate";
+    
+    // Limpiar checkbox al cambiar de formulario
+    document.getElementById("captcha").checked = false;
+    
+    // Resetear visibilidad de contraseña
+    if(document.getElementById("loginPass").type === "text"){
+        document.getElementById("loginPass").type = "password";
+        document.getElementById("toggleBtn").innerHTML = eyeOpenSvg;
+    }
+}
+
+// Función para registrar nuevos usuarios
+function registrar(){
+    const nombre = regNombre.value.trim();
+    const user = regUser.value.trim();
+    const pass = regPass.value.trim();
+
+    if(!nombre || !user || !pass){
+        error.textContent = "Todos los campos son obligatorios";
+        return;
+    }
+
+    // Verifica que el usuario no exista ya
+    if(usuarios.some(u => u.user === user)){
+        error.textContent = "Ese usuario ya existe";
+        return;
+    }
+
+    // Agregar nuevo usuario con rol de "usuario" (no admin)
+    usuarios.push({
+        nombre,
+        user,
+        pass,
+        rol: "usuario"
+    });
+
+    localStorage.setItem("usuarios", JSON.stringify(usuarios));
+    alert("Registro exitoso. Ahora inicia sesión.");
+    toggleForm();
+}
+
+// SVG del ojo abierto
+const eyeOpenSvg = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>';
+
+// SVG del ojo cerrado
+const eyeClosedSvg = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>';
+
+// Alterna la visibilidad de la contraseña
+function togglePassword(){
+    const passInput = document.getElementById("loginPass");
+    const toggleBtn = document.getElementById("toggleBtn");
+    
+    if(passInput.type === "password"){
+        passInput.type = "text";
+        toggleBtn.innerHTML = eyeClosedSvg;
+    } else {
+        passInput.type = "password";
+        toggleBtn.innerHTML = eyeOpenSvg;
+    }
+}
+
+// Inicializar el icono del ojo al cargar la página
+document.addEventListener("DOMContentLoaded", function(){
+    const toggleBtn = document.getElementById("toggleBtn");
+    toggleBtn.innerHTML = eyeOpenSvg;
+});
+
+// Función para iniciar sesión
+function login(){
+    const user = loginUser.value.trim();
+    const pass = loginPass.value.trim();
+    const captchaChecked = document.getElementById("captcha").checked;
+
+    if(!user || !pass){
+        error.textContent = "Complete todos los campos";
+        return;
+    }
+
+    // Validar que marque el captcha
+    if(!captchaChecked){
+        error.textContent = "Debes verificar que no eres un robot";
+        return;
+    }
+
+    // Buscar usuario con esas credenciales
+    const encontrado = usuarios.find(
+        u => u.user === user && u.pass === pass
+    );
+
+    if(!encontrado){
+        error.textContent = "Usuario o contraseña incorrectos";
+        return;
+    }
+
+    // Guardar sesión en localStorage
+    // Esto se usa en todas las páginas para controlar permisos
+    localStorage.setItem("sesionActiva", "true");
+    localStorage.setItem("rol", encontrado.rol);
+    localStorage.setItem("usuarioNombre", encontrado.nombre);
+
+    window.location.href = "base.html";
+}
+</script>
+
+</body>
+</html>

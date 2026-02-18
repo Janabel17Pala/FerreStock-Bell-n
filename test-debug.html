@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Debug - Test Sesión</title>
+<style>
+body {
+    font-family: Arial, sans-serif;
+    background: #1f1f1f;
+    color: #fff;
+    padding: 40px;
+}
+.contenedor {
+    max-width: 600px;
+    margin: auto;
+    background: #2b2b2b;
+    padding: 30px;
+    border-radius: 10px;
+}
+h1 {
+    color: #df7d06;
+}
+.info, .botones {
+    margin: 20px 0;
+}
+.info p {
+    margin: 10px 0;
+    padding: 10px;
+    background: #333;
+    border-left: 4px solid #df7d06;
+}
+button {
+    padding: 10px 20px;
+    margin: 5px;
+    background: #df7d06;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+}
+button:hover {
+    background: #e68817;
+}
+</style>
+</head>
+<body>
+
+<div class="contenedor">
+    <h1>🔍 Debug - Verificar Sesión</h1>
+    
+    <div class="info">
+        <h2>Estado Actual:</h2>
+        <p><strong>Sesión Activa:</strong> <span id="sesion">-</span></p>
+        <p><strong>Rol:</strong> <span id="rol">-</span></p>
+        <p><strong>Nombre Usuario:</strong> <span id="usuario">-</span></p>
+    </div>
+
+    <div class="botones">
+        <h2>Acciones de Test:</h2>
+        <button onclick="verificar()">Actualizar Verificación</button>
+        <button onclick="simularAdminLogin()">Simular Login Admin</button>
+        <button onclick="simularUserLogin()">Simular Login Usuario</button>
+        <button onclick="limpiarSesion()">Limpiar Sesión</button>
+    </div>
+
+    <div class="info">
+        <h2>Contenido Completo localStorage:</h2>
+        <p id="localStorage">-</p>
+    </div>
+
+    <div class="botones">
+        <button onclick="irABase()">Ir a Base.html</button>
+        <button onclick="irALogin()">Ir a Login.html</button>
+        <button onclick="irAInventario()">Ir a Inventario.html</button>
+        <button onclick="irAStock()">Ir a Stock.html</button>
+    </div>
+</div>
+
+<script>
+function verificar(){
+    const sesion = localStorage.getItem('sesionActiva');
+    const rol = localStorage.getItem('rol');
+    const usuario = localStorage.getItem('usuarioNombre');
+    
+    document.getElementById('sesion').textContent = sesion || 'No';
+    document.getElementById('rol').textContent = rol || 'No definido';
+    document.getElementById('usuario').textContent = usuario || 'No definido';
+    
+    let local = '';
+    for(let key in localStorage){
+        if(localStorage.hasOwnProperty(key)){
+            local += `<strong>${key}:</strong> ${localStorage.getItem(key)}<br>`;
+        }
+    }
+    document.getElementById('localStorage').innerHTML = local || 'localStorage vacío';
+}
+
+function simularAdminLogin(){
+    localStorage.setItem('sesionActiva', 'true');
+    localStorage.setItem('rol', 'admin');
+    localStorage.setItem('usuarioNombre', 'admin');
+    verificar();
+    alert('Sesión Admin simulada. Verifica abajo y luego ve a base.html');
+}
+
+function simularUserLogin(){
+    localStorage.setItem('sesionActiva', 'true');
+    localStorage.setItem('rol', 'usuario');
+    localStorage.setItem('usuarioNombre', 'Usuario Test');
+    verificar();
+    alert('Sesión Usuario simulada. Verifica abajo y luego ve a base.html');
+}
+
+function limpiarSesion(){
+    localStorage.clear();
+    verificar();
+    alert('Sesión limpiada');
+}
+
+function irABase(){
+    window.location.href = 'base.html';
+}
+
+function irALogin(){
+    window.location.href = 'login.html';
+}
+
+function irAInventario(){
+    window.location.href = 'inventario.html';
+}
+
+function irAStock(){
+    window.location.href = 'stock.html';
+}
+
+// Verificar al cargar
+window.addEventListener('load', verificar);
+</script>
+
+</body>
+</html>

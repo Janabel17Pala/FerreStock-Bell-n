@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crear Cuenta - Ferretería Bellon</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <style>
+        :root {
+            --primary-color: #f37321;
+            --primary-hover: #ff8533;
+            --bg-dark: #1a1a1a;
+            --card-bg: #262626;
+            --input-bg: #d1cece;
+            --text-light: #ffffff;
+            --text-muted: #b5b5b5;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.6);
+            width: 100%;
+            max-width: 430px;
+            text-align: center;
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        .logo {
+            font-size: 2.2rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 5px;
+        }
+
+        h2 {
+            color: var(--text-light);
+            margin-bottom: 25px;
+            font-weight: 500;
+        }
+
+        .input-group {
+            margin-bottom: 18px;
+            position: relative;
+            text-align: left;
+        }
+
+        label {
+            display: block;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px 15px;
+            background-color: var(--input-bg);
+            border-radius: 8px;
+            border: none;
+            color: #000;
+            font-size: 16px;
+        }
+
+        input:focus {
+            outline: 2px solid var(--primary-color);
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 15px;
+            top: 42px;
+            cursor: pointer;
+            color: #555;
+        }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            background-color: var(--primary-color);
+            border: none;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+            text-transform: uppercase;
+            margin-top: 10px;
+            letter-spacing: 1px;
+            color: #000;
+        }
+
+        button:hover {
+            background-color: var(--primary-hover);
+        }
+
+        .link-login {
+            display: block;
+            margin-top: 22px;
+            color: var(--primary-color);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .link-login:hover {
+            text-decoration: underline;
+        }
+
+        .footer-text {
+            margin-top: 25px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="card">
+    <div class="logo">BELLON</div>
+    <h2>Crear Nueva Cuenta</h2>
+
+        <form id="registerForm">
+            <div class="input-group">
+                <label>Correo electrónico</label>
+                <input id="email" type="email" placeholder="usuario@bellon.com" required>
+            </div>
+
+            <div class="input-group">
+                <label>Contraseña</label>
+                <input id="password" type="password" required>
+                <i class="fa-regular fa-eye toggle-password" id="togglePass1"></i>
+            </div>
+
+            <div class="input-group">
+                <label>Confirmar contraseña</label>
+                <input id="confirmPassword" type="password" required>
+                <i class="fa-regular fa-eye toggle-password" id="togglePass2"></i>
+            </div>
+
+            <button type="submit">Crear Cuenta</button>
+        </form>
+
+    <a href="/" class="link-login">
+        ← Volver al inicio de sesión
+    </a>
+
+    <div class="footer-text">
+        &copy; 2026 Ferretería Bellon S.A.S.
+    </div>
+</div>
+
+<script>
+    function toggle(inputId, iconId) {
+        const input = document.getElementById(inputId);
+        const icon = document.getElementById(iconId);
+        input.type = input.type === "password" ? "text" : "password";
+        icon.classList.toggle("fa-eye");
+        icon.classList.toggle("fa-eye-slash");
+    }
+
+    togglePass1.onclick = () => toggle("password", "togglePass1");
+    togglePass2.onclick = () => toggle("confirmPassword", "togglePass2");
+
+    // Validación de cliente: confirmar contraseñas antes de enviar
+    document.getElementById("registerForm").addEventListener("submit", function(e) {
+        const pass = document.getElementById('password').value;
+        const confirm = document.getElementById('confirmPassword').value;
+        if (pass !== confirm) {
+            e.preventDefault();
+            alert("Las contraseñas no coinciden.");
+            return;
+        }
+    });
+</script>
+
+</body>
+</html>

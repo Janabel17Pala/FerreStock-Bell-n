@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>FerreStock | Bellon</title>
+
+<style>
+:root{
+    --oscuro:#1f1f1f;
+    --medio:#2b2b2b;
+    --naranja:#df7d06;
+    --texto:#ffffff;
+}
+
+*{
+    box-sizing:border-box;
+    font-family:Segoe UI, Arial, sans-serif;
+    color:var(--texto);
+}
+
+body{
+    margin:0;
+    background:var(--oscuro);
+}
+
+/* HEADER */
+header{
+    position:fixed;
+    top:0;
+    width:100%;
+    background:#1b1b1b;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:15px 50px;
+    border-bottom:3px solid var(--naranja);
+    z-index:100;
+}
+
+header h1{
+    margin:0;
+    color:var(--naranja);
+}
+
+nav{
+    display:flex;
+    align-items:center;
+}
+
+nav a, nav span{
+    color:#fff;
+    margin-left:25px;
+    text-decoration:none;
+    font-weight:600;
+    cursor:pointer;
+}
+
+nav a:hover{
+    color:var(--naranja);
+}
+
+/* Estilo para enlace activo en el menú */
+nav a.activo{
+    color:var(--naranja);
+    font-weight:700;
+    border-bottom:3px solid var(--naranja);
+    padding-bottom:5px;
+}
+
+#bienvenida{
+    color:var(--naranja);
+}
+
+#inventarioLink, #stockLink, #productosLink, #informesLink{
+    display:none;
+}
+
+/* HERO */
+.hero{
+    height:100vh;
+    position:relative;
+    overflow:hidden;
+}
+
+.hero::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:rgba(0,0,0,.65);
+    z-index:1;
+}
+
+.hero img{
+    position:absolute;
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    animation:slider 9s infinite;
+}
+
+.hero img:nth-child(2){animation-delay:3s;}
+.hero img:nth-child(3){animation-delay:6s;}
+
+@keyframes slider{
+    0%{opacity:0}
+    10%{opacity:1}
+    30%{opacity:1}
+    40%{opacity:0}
+    100%{opacity:0}
+}
+
+.hero-content{
+    position:relative;
+    z-index:2;
+    height:100%;
+    display:flex;
+    align-items:center;
+    padding:80px;
+}
+
+.hero-box{
+    max-width:600px;
+}
+
+.hero-box h2{
+    font-size:42px;
+    color:var(--naranja);
+}
+
+/* SECCIONES */
+section{
+    padding:80px 60px;
+}
+
+/* QUIÉNES SOMOS */
+.sobre{
+    background:#1a1a1a;
+}
+
+.sobre-container{
+    max-width:1200px;
+    margin:auto;
+    display:flex;
+    gap:60px;
+    align-items:center;
+}
+
+.sobre-texto{
+    flex:1;
+}
+
+.sobre-texto h2{
+    color:var(--naranja);
+    font-size:36px;
+    margin-bottom:20px;
+}
+
+.sobre-texto p{
+    font-size:18px;
+    margin-bottom:25px;
+    line-height:1.6;
+}
+
+.sobre-items .item{
+    font-size:16px;
+    margin-bottom:12px;
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
+
+.sobre-img{
+    flex:1;
+}
+
+.sobre-img img{
+    width:100%;
+    border-radius:14px;
+    box-shadow:0 10px 30px rgba(0,0,0,.4);
+}
+
+/* FILOSOFÍA */
+.filosofia{
+    background:#0e0d0d;
+}
+
+.filosofia h2{
+    text-align:center;
+    color:var(--naranja);
+}
+
+.cards{
+    display:flex;
+    justify-content:center;
+    gap:30px;
+    margin-top:40px;
+}
+
+.card{
+    background:#292828;
+    width:300px;
+    border-radius:12px;
+    overflow:hidden;
+    box-shadow:0 5px 18px rgba(0,0,0,.25);
+    transition:.3s;
+}
+
+.card:hover{
+    transform:translateY(-8px);
+}
+
+.card img{
+    width:100%;
+    height:180px;
+    object-fit:cover;
+}
+
+.card-content{
+    padding:20px;
+    text-align:center;
+}
+
+.card-content h3{
+    color:var(--naranja);
+}
+
+/* FOOTER */
+footer{
+    background:#111;
+    text-align:center;
+    padding:25px;
+    border-top:3px solid var(--naranja);
+}
+</style>
+</head>
+
+<body>
+
+<!-- HEADER: Navegación principal con menú dinámico según el rol del usuario -->
+<header>
+    <h1 onclick="window.location.href='base.html'" style="cursor:pointer;">FerreStock Bellon</h1>
+    <nav>
+        <!-- Mensaje de bienvenida personalizado que se actualiza con updateMenuByRole() -->
+        <span id="bienvenida"></span>
+        
+        <!-- Enlaces del menú - se muestran/ocultan según permisos -->
+        <a onclick="ir('inicio')">Inicio</a>
+        <a id="productosLink" href="productos.html">Productos</a>
+        
+        <!-- Estas secciones solo se muestran para administradores (Stock antes que Inventario) -->
+        <a id="stockLink" href="stock.html">Stock</a>
+        <a id="inventarioLink" href="inventario.html">Inventario</a>
+        <a id="informesLink" href="informes.html">Informes</a>
+        
+        <a href="Contacto.html">Contacto</a>
+        
+        <!-- Botones de sesión que se alternan según si está logueado -->
+        <a id="loginLink" href="login.html">Iniciar sesión</a>
+        <a id="logoutLink" onclick="cerrarSesion()">Cerrar sesión</a>
+    </nav>
+</header>
+
+<div class="hero" id="inicio">
+    <img src="https://www.kordata.it/mx/wp-content/uploads/sites/4/2023/12/ferreteria.png">
+    <img src="https://manuelcorripiosas.com/images/secciones/listo-ferreteria/Pasillo_de_Listo-2.jpg">
+    <img src="https://lh3.googleusercontent.com/gps-cs-s/AHVAweqq3QAXfmMWd02waid5qh6IInrzHBFtughjkC78plK9Dop_cCasdVGbWq16lkU1TaV3uBQ2fSAVzkpQ1MUjIFU-0-_aD46krT3HDDO-6bnfnMCM-EnADtFocmfXCBtnowmnzAU=s680-w680-h510-rw">
+
+    <div class="hero-content">
+        <div class="hero-box">
+            <h2>FerreStock Bellon</h2>
+            <p>
+                En Ferretería Bellon trabajamos cada día para ofrecer soluciones confiables en materiales, herramientas y equipos para la construcción, el hogar y la industria. Contamos con una amplia variedad de productos de calidad, pensados para satisfacer las necesidades tanto de profesionales como de clientes particulares.
+                Nos caracterizamos por brindar un servicio cercano, honesto y responsable, apoyando a nuestros clientes con asesoría personalizada para que encuentren exactamente lo que necesitan.
+            </p>
+        </div>
+    </div>
+</div>
+
+<section class="sobre" id="nosotros">
+    <div class="sobre-container">
+        <div class="sobre-texto">
+            <h2>¿Quiénes Somos?</h2>
+            <p>
+                Somos una ferretería comprometida con brindar soluciones prácticas y confiables
+                para el hogar, la construcción y el trabajo diario.
+            </p>
+
+            <div class="sobre-items">
+                <div class="item">* <span>Herramientas y materiales de calidad</span></div>
+                <div class="item">* <span>Atención responsable</span></div>
+                <div class="item">* <span>Apoyo en cada proyecto</span></div>
+                <div class="item">* <span>Confianza y compromiso</span></div>
+            </div>
+        </div>
+
+        <div class="sobre-img">
+            <img src="https://maluma.com.co/wp-content/uploads/2025/07/ferreteria-1.webp">
+        </div>
+    </div>
+</section>
+
+<section class="filosofia" id="filosofia">
+    <h2>Nuestra Filosofía</h2>
+
+    <div class="cards">
+        <div class="card">
+            <img src="https://www.liceomaterdei.com/wp-content/uploads/2020/10/Mision.jpg">
+            <div class="card-content">
+                <h3>Misión</h3>
+                <p>Brindar productos ferreteros de calidad y un servicio responsable.</p>
+            </div>
+        </div>
+
+        <div class="card">
+            <img src="https://us.123rf.com/450wm/mawardibahar/mawardibahar1703/mawardibahar170311865/73466014-mano-que-sostiene-el-rompecabezas-blanco-con-texto-conceptual.jpg">
+            <div class="card-content">
+                <h3>Visión</h3>
+                <p>Ser la primera opción en ferretería de nuestra comunidad.</p>
+            </div>
+        </div>
+
+        <div class="card">
+            <img src="https://fjseguros.es/wp-content/uploads/2023/11/mision-vision-400x300-1-1.png">
+            <div class="card-content">
+                <h3>Valores</h3>
+                <p>Responsabilidad, Honestidad, Calidad y Compromiso.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<footer>
+    <p>FerreStock Bellon © 2026</p>
+    <p>Desarrollado por Anabel Mary Jiménez Ramírez</p>
+</footer>
+
+<script>
+// Función para desplazarse suavemente a una sección (usado por el botón Inicio)
+function ir(id){
+    document.getElementById(id).scrollIntoView({behavior:"smooth"});
+}
+
+// Actualiza el menú según el rol del usuario logueado
+// Se ejecuta cada vez que entra a la página
+function updateMenuByRole(){
+    const role = localStorage.getItem('rol');
+    const loginLink = document.getElementById('loginLink');
+    const logoutLink = document.getElementById('logoutLink');
+    const bienvenida = document.getElementById('bienvenida');
+    const inventarioLink = document.getElementById('inventarioLink');
+    const stockLink = document.getElementById('stockLink');
+    const productosLink = document.getElementById('productosLink');
+    const informesLink = document.getElementById('informesLink');
+
+    if(role === 'admin'){
+        // Administrador: ve todas las opciones
+        loginLink.style.display = 'none';
+        logoutLink.style.display = 'inline';
+        productosLink.style.display = 'inline';
+        stockLink.style.display = 'inline';
+        inventarioLink.style.display = 'inline';
+        informesLink.style.display = 'inline';
+        bienvenida.textContent = '¡Bienvenido admin!';
+    } else if(role === 'usuario'){
+        // Usuario regular: solo ve Inicio, Productos y Contacto
+        loginLink.style.display = 'none';
+        logoutLink.style.display = 'inline';
+        productosLink.style.display = 'inline';
+        stockLink.style.display = 'none';
+        inventarioLink.style.display = 'none';
+        informesLink.style.display = 'none';
+        bienvenida.textContent = '¡Bienvenido usuario!';
+    } else {
+        // Visitante sin loguear: solo ve Inicio, Contacto e Iniciar sesión
+        loginLink.style.display = 'inline';
+        logoutLink.style.display = 'none';
+        productosLink.style.display = 'none';
+        stockLink.style.display = 'none';
+        inventarioLink.style.display = 'none';
+        informesLink.style.display = 'none';
+        bienvenida.textContent = '';
+    }
+}
+
+// Marca el enlace activo en el menú según la página actual
+function marcarPaginaActiva(){
+    // Obtener el nombre del archivo actual
+    const nombreArchivo = window.location.pathname.split('/').pop() || 'base.html';
+    const mapa = {
+        'base.html': 'inicio',
+        'productos.html': 'productosLink',
+        'stock.html': 'stockLink',
+        'inventario.html': 'inventarioLink',
+        'informes.html': 'informesLink',
+        'Contacto.html': 'contactoLink',
+        '': 'inicio' // En caso de ser raíz
+    };
+    
+    const enlaceActivo = mapa[nombreArchivo];
+    
+    // Remover clase activa de todos los enlaces
+    document.querySelectorAll('nav a').forEach(link => {
+        link.classList.remove('activo');
+    });
+    
+    // Agregar clase activa al enlace correspondiente
+    if(enlaceActivo){
+        const elemento = document.getElementById(enlaceActivo);
+        if(elemento){
+            elemento.classList.add('activo');
+        } else if(enlaceActivo === 'inicio'){
+            // Para el inicio, marcar el primer enlace o el que dice "Inicio"
+            const inicioLink = Array.from(document.querySelectorAll('nav a')).find(a => 
+                a.textContent.trim() === 'Inicio' || a.href.includes('base.html')
+            );
+            if(inicioLink) inicioLink.classList.add('activo');
+        }
+    }
+}
+
+// Esperar a que el DOM cargue antes de actualizar el menú
+document.addEventListener('DOMContentLoaded', function(){
+    updateMenuByRole();
+    marcarPaginaActiva();
+});
+
+// Cerrar sesión y limpiar localStorage
+function cerrarSesion(){
+    localStorage.removeItem('sesionActiva');
+    localStorage.removeItem('mensajeLogin');
+    localStorage.removeItem('rol');
+    localStorage.removeItem('usuarioNombre');
+    window.location.href = 'base.html';
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Stock | FerreStock Bellon</title>
+
+<style>
+:root{
+    --oscuro:#1f1f1f;
+    --medio:#2b2b2b;
+    --naranja:#df7d06;
+    --texto:#ffffff;
+    --rojo:#c0392b;
+    --azul:#2980b9;
+}
+
+*{
+    box-sizing:border-box;
+    font-family:Segoe UI, Arial, sans-serif;
+    color:var(--texto);
+}
+
+body{
+    margin:0;
+    background:var(--oscuro);
+    padding-top:90px;
+}
+
+/* HEADER */
+header{
+    position:fixed;
+    top:0;
+    width:100%;
+    background:#1b1b1b;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:15px 50px;
+    border-bottom:3px solid var(--naranja);
+    z-index:100;
+}
+
+header h1{
+    margin:0;
+    color:var(--naranja);
+}
+
+nav{
+    display:flex;
+    align-items:center;
+}
+
+nav a, nav span{
+    color:#fff;
+    margin-left:25px;
+    text-decoration:none;
+    font-weight:600;
+    cursor:pointer;
+}
+
+nav a:hover{
+    color:var(--naranja);
+}
+
+/* Estilo para enlace activo en el menú */
+nav a.activo{
+    color:var(--naranja);
+    font-weight:700;
+    border-bottom:3px solid var(--naranja);
+    padding-bottom:5px;
+}
+
+#bienvenida{
+    color:var(--naranja);
+}
+
+#inventarioLink, #stockLink, #productosLink, #informesLink{
+    display:none;
+}
+
+/* CONTENIDO */
+.container{
+    padding:40px;
+}
+
+h1{
+    color:var(--naranja);
+}
+
+button{
+    padding:10px 15px;
+    border:none;
+    border-radius:6px;
+    cursor:pointer;
+    font-weight:600;
+}
+
+.btn-add{ background:var(--naranja); }
+.btn-edit{ background:var(--azul); }
+.btn-delete{ background:var(--rojo); }
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    margin-top:20px;
+    background:var(--medio);
+    border-radius:10px;
+    overflow:hidden;
+}
+
+th, td{
+    padding:14px;
+    text-align:center;
+}
+
+th{
+    background:#191919;
+    color:var(--naranja);
+}
+
+tr:nth-child(even){
+    background:#252525;
+}
+
+/* MODAL */
+.modal{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.7);
+    display:none;
+    align-items:center;
+    justify-content:center;
+}
+
+.modal-content{
+    background:#262626;
+    padding:30px;
+    width:380px;
+    border-radius:12px;
+}
+
+.modal-content h2{
+    color:var(--naranja);
+}
+
+input{
+    width:100%;
+    padding:10px;
+    margin-bottom:15px;
+    background:#333;
+    border:none;
+    border-radius:6px;
+}
+
+.modal-actions{
+    display:flex;
+    gap:10px;
+}
+</style>
+</head>
+
+<body>
+
+<script>
+// Protección: solo admin puede acceder
+const role = localStorage.getItem('rol');
+if(role !== 'admin'){
+    alert('Acceso denegado. Solo administradores pueden acceder aquí.');
+    window.location.href = 'base.html';
+}
+</script>
+
+<header>
+    <h1 onclick="window.location.href='base.html'" style="cursor:pointer;">FerreStock Bellon</h1>
+    <nav>
+        <span id="bienvenida"></span>
+        <a onclick="window.location.href='base.html'">Inicio</a>
+        <a id="productosLink" href="productos.html">Productos</a>
+        <a id="stockLink" href="stock.html">Stock</a>
+        <a id="inventarioLink" href="inventario.html">Inventario</a>
+        <a id="informesLink" href="informes.html">Informes</a>
+        <a id="contactoLink" href="Contacto.html">Contacto</a>
+        <a id="loginLink" href="login.html">Iniciar sesión</a>
+        <a id="logoutLink" onclick="cerrarSesion()">Cerrar sesión</a>
+    </nav>
+</header>
+    </nav>
+</header>
+
+<div class="container">
+<h1>Stock General</h1>
+<button class="btn-add" onclick="abrirModal()">Agregar</button>
+
+<table>
+<thead>
+<tr>
+    <th>Producto</th>
+    <th>Categoría</th>
+    <th>Ubicación</th>
+    <th>Cantidad</th>
+    <th>Acciones</th>
+</tr>
+</thead>
+<tbody id="tablaStock"></tbody>
+</table>
+</div>
+
+<div class="modal" id="modal">
+<div class="modal-content">
+    <h2 id="tituloModal">Agregar Stock</h2>
+
+    <input id="producto" placeholder="Nombre del producto">
+    <input id="categoria" placeholder="Categoría">
+    <input id="ubicacion" placeholder="Ubicación">
+    <input id="cantidad" type="number" placeholder="Cantidad">
+
+    <div class="modal-actions">
+        <button class="btn-add" onclick="guardar()">Guardar</button>
+        <button class="btn-delete" onclick="cerrarModal()">Cancelar</button>
+    </div>
+</div>
+</div>
+
+<script>
+// 🔒 PROTECCIÓN: Solo administradores pueden acceder a stock
+function updateMenuByRole(){
+    const role = localStorage.getItem('rol');
+    const sesion = localStorage.getItem("sesionActiva");
+    const loginLink = document.getElementById('loginLink');
+    const logoutLink = document.getElementById('logoutLink');
+    const bienvenida = document.getElementById('bienvenida');
+    const inventarioLink = document.getElementById('inventarioLink');
+    const stockLink = document.getElementById('stockLink');
+    const productosLink = document.getElementById('productosLink');
+    const informesLink = document.getElementById('informesLink');
+
+    // Validar que sea admin
+    if(sesion !== "true" || role !== "admin"){
+        alert('Acceso denegado. Solo administradores pueden acceder aquí.');
+        window.location.href = "base.html";
+        return;
+    }
+
+    // Admin ve todas las opciones
+    loginLink.style.display = 'none';
+    logoutLink.style.display = 'inline';
+    productosLink.style.display = 'inline';
+    stockLink.style.display = 'inline';
+    inventarioLink.style.display = 'inline';
+    informesLink.style.display = 'inline';
+    bienvenida.textContent = '¡Bienvenido admin!';
+}
+
+function cerrarSesion(){
+    localStorage.removeItem('sesionActiva');
+    localStorage.removeItem('mensajeLogin');
+    localStorage.removeItem('rol');
+    localStorage.removeItem('usuarioNombre');
+    window.location.href = 'base.html';
+}
+
+// Marca el enlace activo en el menú según la página actual
+function marcarPaginaActiva(){
+    // Obtener el nombre del archivo actual
+    const nombreArchivo = window.location.pathname.split('/').pop() || 'base.html';
+    const mapa = {
+        'base.html': 'inicio',
+        'productos.html': 'productosLink',
+        'stock.html': 'stockLink',
+        'inventario.html': 'inventarioLink',
+        'informes.html': 'informesLink',
+        'Contacto.html': 'contactoLink',
+        '': 'inicio' // En caso de ser raíz
+    };
+    
+    const enlaceActivo = mapa[nombreArchivo];
+    
+    // Remover clase activa de todos los enlaces
+    document.querySelectorAll('nav a').forEach(link => {
+        link.classList.remove('activo');
+    });
+    
+    // Agregar clase activa al enlace correspondiente
+    if(enlaceActivo){
+        const elemento = document.getElementById(enlaceActivo);
+        if(elemento){
+            elemento.classList.add('activo');
+        } else if(enlaceActivo === 'inicio'){
+            // Para el inicio, marcar el primer enlace o el que dice "Inicio"
+            const inicioLink = Array.from(document.querySelectorAll('nav a')).find(a => 
+                a.textContent.trim() === 'Inicio' || a.href.includes('base.html')
+            );
+            if(inicioLink) inicioLink.classList.add('activo');
+        }
+    }
+}
+
+// Variables globales para el CRUD del stock
+let stock = JSON.parse(localStorage.getItem("stock")) || [];
+let editIndex = null;
+
+// Dibuja la tabla con todos los items del stock
+function render(){
+    tablaStock.innerHTML="";
+    stock.forEach((item,i)=>{
+        tablaStock.innerHTML+=`
+        <tr>
+            <td>${item.producto}</td>
+            <td>${item.categoria}</td>
+            <td>${item.ubicacion}</td>
+            <td>${item.cantidad}</td>
+            <td>
+                <button class="btn-edit" onclick="editar(${i})">Editar</button>
+                <button class="btn-delete" onclick="eliminar(${i})">Eliminar</button>
+            </td>
+        </tr>`;
+
+    });
+}
+
+// Abre el modal para agregar un nuevo item
+function abrirModal(){
+    editIndex=null;
+    tituloModal.textContent="Agregar Stock";
+    limpiar();
+    modal.style.display="flex";
+}
+
+// Cierra el modal sin guardar
+function cerrarModal(){
+    modal.style.display="none";
+}
+
+// Limpia los inputs del formulario
+function limpiar(){
+    producto.value="";
+    categoria.value="";
+    ubicacion.value="";
+    cantidad.value="";
+}
+
+// Guarda un item nuevo o actualiza uno existente
+function guardar(){
+    const item={
+        producto:producto.value,
+        categoria:categoria.value,
+        ubicacion:ubicacion.value,
+        cantidad:cantidad.value
+    };
+
+    // Si editIndex es null es nuevo, si no es una edición
+    editIndex===null ? stock.push(item) : stock[editIndex]=item;
+    localStorage.setItem("stock",JSON.stringify(stock));
+    cerrarModal();
+    render();
+}
+
+// Abre el modal con los datos de un item para editarlo
+function editar(i){
+    editIndex=i;
+    const item=stock[i];
+    producto.value=item.producto;
+    categoria.value=item.categoria;
+    ubicacion.value=item.ubicacion;
+    cantidad.value=item.cantidad;
+    tituloModal.textContent="Editar Stock";
+    modal.style.display="flex";
+}
+
+// Elimina un item del stock con confirmación
+function eliminar(i){
+    if(confirm("¿Eliminar este producto del stock?")){
+        stock.splice(i,1);
+        localStorage.setItem("stock",JSON.stringify(stock));
+        render();
+    }
+}
+
+// Inicializar: actualizar menú según rol y mostrar tabla
+document.addEventListener('DOMContentLoaded', function(){
+    updateMenuByRole();
+    marcarPaginaActiva();
+    render();
+});;
+</script>
+
+</body>
+</html>

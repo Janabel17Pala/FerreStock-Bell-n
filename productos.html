@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Productos </title>
+
+<style>
+:root{
+    --oscuro:#1f1f1f;
+    --medio:#2b2b2b;
+    --naranja:#df7d06;
+    --texto:#ffffff;
+}
+
+*{
+    box-sizing:border-box;
+    font-family:Segoe UI, Arial, sans-serif;
+    color:var(--texto);
+}
+
+body{
+    margin:0;
+    background:var(--oscuro);
+}
+
+/* HEADER */
+header{
+    background:#1b1b1b;
+    padding:15px 50px;
+    border-bottom:3px solid var(--naranja);
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+header h1{margin:0;color:var(--naranja);}
+nav{
+    display:flex;
+    align-items:center;
+}
+nav a, nav span{
+    color:#fff;
+    margin-left:25px;
+    text-decoration:none;
+    font-weight:600;
+    cursor:pointer;
+}
+nav a:hover{color:var(--naranja);}
+
+/* Estilo para enlace activo en el menú */
+nav a.activo{
+    color:var(--naranja);
+    font-weight:700;
+    border-bottom:3px solid var(--naranja);
+    padding-bottom:5px;
+}
+
+#bienvenida{
+    color:var(--naranja);
+}
+
+#inventarioLink, #stockLink, #productosLink, #informesLink{
+    display:none;
+}
+
+/* SECCIONES */
+section{
+    padding:70px 50px;
+}
+
+/* GRID */
+.grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+    gap:30px;
+}
+
+.card{
+    background:#292828;
+    border-radius:14px;
+    overflow:hidden;
+    box-shadow:0 8px 20px rgba(0,0,0,.4);
+    transition:.3s;
+    text-align:center;
+}
+.card:hover{transform:translateY(-6px);}
+
+.card img{
+    width:100%;
+    height:180px;
+    object-fit:cover;
+}
+
+.card div{padding:20px;}
+.card h3{color:var(--naranja);}
+
+.card button{
+    margin-top:10px;
+    padding:10px 20px;
+    border:none;
+    border-radius:20px;
+    background:var(--naranja);
+    font-weight:bold;
+    cursor:pointer;
+}
+
+/* OCULTO */
+.oculto{display:none;}
+
+.titulo{
+    text-align:center;
+    color:var(--naranja);
+    font-size:36px;
+    margin-bottom:40px;
+}
+
+.volver{
+    margin-bottom:30px;
+    background:none;
+    border:2px solid var(--naranja);
+    padding:8px 18px;
+    cursor:pointer;
+    border-radius:20px;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <h1 onclick="window.location.href='base.html'" style="cursor:pointer;">FerreStock Bellon</h1>
+    <nav>
+        <span id="bienvenida"></span>
+        <a href="base.html">Inicio</a>
+        <a id="productosLink" href="productos.html">Productos</a>
+        <a id="stockLink" href="stock.html">Stock</a>
+        <a id="inventarioLink" href="inventario.html">Inventario</a>
+        <a id="informesLink" href="informes.html">Informes</a>
+        <a id="contactoLink" href="Contacto.html">Contacto</a>
+        <a id="loginLink" href="login.html">Iniciar sesión</a>
+        <a id="logoutLink" onclick="cerrarSesion()">Cerrar sesión</a>
+    </nav>
+</header>
+
+<!-- VISTA GENERAL -->
+<section id="general">
+    <h2 class="titulo">Nuestros Productos</h2>
+
+    <div class="grid">
+
+        <div class="card">
+            <img src="https://zummar.com/wp-content/uploads/2025/05/Herramientas-para-la-casa-C-1-1024x682-2.jpg">
+            <div>
+                <h3>Herramientas</h3>
+                <p>Martillos, destornilladores, alicates</p>
+                <button onclick="mostrar('herramientas')">Ver herramientas</button>
+            </div>
+        </div>
+
+        <div class="card">
+            <img src="https://www.elektron.com.mx/media/wysiwyg/variedad_de_herramientas_el_ctricas.jpg">
+            <div>
+                <h3>Electricidad</h3>
+                <p>Cables, breakers, tomacorrientes</p>
+                <button onclick="mostrar('electricidad')">Ver electricidad</button>
+            </div>
+        </div>
+
+        <div class="card">
+            <img src="https://paduamateriales.com/wp-content/uploads/cuales-son-las-materias-primas-en-la-construccion.webp">
+            <div>
+                <h3>Construcción</h3>
+                <p>Cemento, arena, bloques</p>
+                <button onclick="mostrar('construccion')">Ver construcción</button>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+<!-- HERRAMIENTAS -->
+<section id="herramientas" class="oculto">
+    <button class="volver" onclick="volver()">← Volver</button>
+    <h2 class="titulo">Herramientas</h2>
+
+    <div class="grid">
+        <div class="card"><img src="https://cmindustrialsupport.com/cdn/shop/files/MARTILLOCARPINTEROTRUPER.png?v=1712607814"><div><h3>Martillo</h3><p>Martillo Truper 16 oz - Mango de Fibra de Vidrio</p></p></div></div>
+        <div class="card"><img src="https://ferreman.pe/wp-content/uploads/2023/09/DR-3-16X4B.jpg"><div><h3>Destornillador</h3><p>Destornillador de Pala (Plano) Truper - Serie Profesional</p></p></div></div>
+        <div class="card"><img src="https://ferremix.com.do/cdn/shop/files/T17329.jpg?v=1754323235"><div><h3>Alicates</h3><p>Pinza de Electricista Truper Expert (Aislada)</p></p></div></div>
+         <div class="card"><img src="https://prod-resize.tiendainglesa.com.uy/images/medium/P495938-2.jpg?20230623120041,Llave-Francesa-Ajustable-KENDO-300-mm-12in-en-Tienda-Inglesa"><div><h3>Llave Francesa</h3><p>Llave Ajustable (Perica) con Mango Ergonómico</p></div></div>
+        <div class="card"><img src="https://savec.pe/cdn/downloads/productos/P_5_0.jpg"><div><h3>Segueta</h3><p>Arco para Segueta Profesional Truper Expert</p></p></div></div>
+        <div class="card"><img src="https://http2.mlstatic.com/D_NQ_NP_795095-MLU74362148970_022024-O.webp"><div><h3>Tuercas</h3><p>Tuercas Hexagonales de Acero Inoxidable 304 o 316</p></p></div></div>
+         <div class="card"><img src="https://image.made-in-china.com/251f0j00qYGUliMaFEWg/made-in-china.jpg"><div><h3>Tornillos</h3><p>Tornillos de Seguridad Torx con Pin (Acero Inoxidable)</p></p></div></div>
+          <div class="card"><img src="https://solucionesstg.com.ar/wp-content/uploads/2023/02/LUF-JLLA-1025_1.jpg"><div><h3>Llave Allen</h3><p>Juego de Llaves Allen con Punta de Bola, permite trabajar con una inclinación de hasta 25°</p></p></div></div>
+    </div>
+</section>
+
+<!-- ELECTRICIDAD -->
+<section id="electricidad" class="oculto">
+    <button class="volver" onclick="volver()">← Volver</button>
+    <h2 class="titulo">Electricidad</h2>
+
+    <div class="grid">
+        <div class="card"><img src="https://image.made-in-china.com/2f0j00MAlVqgbrlBzw/PVC-Insulation-Copper-Wire-Single-Core-Stranded-Home-Building-Electrical-Wires-Electrical-Wire.jpg"><div><h3>Cables</h3><p>Cable Eléctrico THHN/THWN-2 (Calibres varios)</p></p></div></div>
+        <div class="card"><img src="https://distribuidortruper.mx/wp-content/uploads/2021/08/cuales-son-las-funciones-de-un-taladro.png"><div><h3>Taladro</h3><p>Rotomartillo Profesional Truper con mango Auxiliar de 360°</p></div></div>
+        <div class="card"><img src="https://clidair.com/cdn/shop/files/93-1121_2_bb02bdc4-fc31-423d-8b9b-cdffd05a18bc_512x512.jpg?v=1747857746"><div><h3>Medidor de Electricidad</h3><p>Multímetro Digital de Gancho (Pinza Amperimétrica)</p></div></div>
+    <div class="card"><img src="https://i5.walmartimages.com/asr/c7e0b511-1bf3-446b-b698-5e31334b0d89.0896c371d5544ad2709b9236e685c7fe.jpeg?odnHeight=612&odnWidth=612&odnBg=FFFFFF"><div><h3>Conectores</h3><p>Conector de Empalme Rápido (Tipo Palanca)</p></p></div></div>
+        <div class="card"><img src="https://bioled.com.co/wp-content/uploads/2021/10/Bombillo-high-power.png"><div><h3>Bombilla</h3><p>Lámpara LED de Alta Potencia (Tipo Bulbo)</p></div></div>
+        <div class="card"><img src="https://www.modregohogar.com/389152-large_default/navaja-electricista-bahco.jpg"><div><h3>Navaja</h3><p>Navaja para Electricista Bahco (Hoja con muesca)</p></div></div>
+         <div class="card"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTxGby_dLyX4FGT6NYO2A9DAiRotYZNDlRUag&s"><div><h3> Conector</h3><p>Conector Macho RJ45 Cat6 (Pasante / Pass-Thru)</p></div></div>
+          <div class="card"><img src="https://la-trade.com/wp-content/uploads/2023/11/AnyConv.com__tikje.webp"><div><h3>Tijeras</h3><p>Tijeras para Electricista Aisladas (Proturn)</p></div></div>
+
+    </div>
+</section>
+
+<!-- CONSTRUCCIÓN -->
+<section id="construccion" class="oculto">
+    <button class="volver" onclick="volver()">← Volver</button>
+    <h2 class="titulo">Construcción y Obras</h2>
+
+    <div class="grid">
+        <div class="card"><img src="https://www.cemexmexico.com/documents/5368755/5390981/Info-Cementos-Cemex.jpg/1eeed847-454b-4a4f-8bf0-489936a19e76?version=1.0&t=1763225026577"><div><h3>Cemento</h3><p>Cemento y Mortero CEMEX (Bultos de 25 kg)</p></p></div></div>
+        <div class="card"><img src="https://arcon.com.ni/wp-content/uploads/2022/06/Bloque-8-pulgadas.png"><div><h3>Blocks</h3><p>Bloque de Concreto Estándar (Block)</p></div></div>
+        <div class="card"><img src="https://sigosa.com.mx/assets/images/productos/varilla.jpg"><div><h3>Varillas</h3><p>Varilla Corrugada de Acero</p></div></div>
+        <div class="card"><img src="https://corona.co/medias/100-610253-Primary-1.jpg?context=bWFzdGVyfGltYWdlc3w2MTc5OHxpbWFnZS9qcGVnfGFEVXlMMmcxWWk4NU9EQXhOalk1T1RNMU1UTTBMekV3TUMwMk1UQXlOVE10VUhKcGJXRnllUzB4TG1wd1p3fGU1YTdiYjNlM2Y3NDNiZmM0M2UxYThhMTA4MGU4M2Y1MjEwNzA0ZGNiOTkyYmQ4NDM0NzMyMDMyZGI3ZjFkZmY"><div><h3>Espátula</h3><p>Espátula de Acero Flex para Acabados</p></p></div></div>
+        <div class="card"><img src="https://m.media-amazon.com/images/I/51CDDcwmnxL._AC_SS450_.jpg"><div><h3>Mezcladora</h3><p>Mezcladora Eléctrica Industrial para Mortero y Pintura</p></div></div>
+        <div class="card"><img src="https://panel.construproductos.com/images/posts/62dfef4ba0155.jpg"><div><h3>Ladrillos</h3><p>Ladrillo de Arcilla de Alta Resistencia (Ladrillo Lark)</p></div></div>
+         <div class="card"><img src="https://media.istockphoto.com/id/1373280962/es/foto/tuber%C3%ADa-de-hormig%C3%B3n-industrial-para-la-construcci%C3%B3n-de-edificios-y-tuber%C3%ADa-aislada-sobre-fondo.jpg?s=612x612&w=0&k=20&c=BHrG6mk8KreMOkp61vp1QStzuuhT6U6FO3-wFVtAVkw="><div><h3>Tubos</h3><p>Tubo de Hormigon</p></div></div>
+        <div class="card"><img src="https://st2.depositphotos.com/1000865/7607/i/950/depositphotos_76075309-stock-photo-construction-level-ruler.jpg"><div><h3>Regla</h3><p>Regla nivel del burbuja</p></div></div>
+
+    </div>
+</section>
+
+
+<script>
+function mostrar(id){
+    // Oculta la vista general de productos
+    document.getElementById("general").style.display="none";
+    // Muestra el detalle de un producto específico
+    document.querySelectorAll("section").forEach(s=>s.classList.add("oculto"));
+    document.getElementById(id).classList.remove("oculto");
+}
+
+// Vuelve a la vista general de productos
+function volver(){
+    document.querySelectorAll("section").forEach(s=>s.classList.add("oculto"));
+    document.getElementById("general").style.display="block";
+}
+
+// Actualiza el menú según el rol del usuario
+function updateMenuByRole(){
+    const role = localStorage.getItem('rol');
+    const loginLink = document.getElementById('loginLink');
+    const logoutLink = document.getElementById('logoutLink');
+    const bienvenida = document.getElementById('bienvenida');
+    const inventarioLink = document.getElementById('inventarioLink');
+    const stockLink = document.getElementById('stockLink');
+    const productosLink = document.getElementById('productosLink');
+    const informesLink = document.getElementById('informesLink');
+
+    if(role === 'admin'){
+        // Admin ve todas las opciones
+        loginLink.style.display = 'none';
+        logoutLink.style.display = 'inline';
+        productosLink.style.display = 'inline';
+        stockLink.style.display = 'inline';
+        inventarioLink.style.display = 'inline';
+        informesLink.style.display = 'inline';
+        bienvenida.textContent = '¡Bienvenido admin!';
+    } else if(role === 'usuario'){
+        // Usuario ve Inicio, Productos y Contacto
+        loginLink.style.display = 'none';
+        logoutLink.style.display = 'inline';
+        productosLink.style.display = 'inline';
+        stockLink.style.display = 'none';
+        inventarioLink.style.display = 'none';
+        informesLink.style.display = 'none';
+        bienvenida.textContent = '¡Bienvenido usuario!';
+    } else {
+        // Visitante: solo Inicio, Contacto e Iniciar sesión
+        loginLink.style.display = 'inline';
+        logoutLink.style.display = 'none';
+        productosLink.style.display = 'none';
+        stockLink.style.display = 'none';
+        inventarioLink.style.display = 'none';
+        informesLink.style.display = 'none';
+        bienvenida.textContent = '';
+    }
+}
+
+// Marca el enlace activo en el menú según la página actual
+function marcarPaginaActiva(){
+    // Obtener el nombre del archivo actual
+    const nombreArchivo = window.location.pathname.split('/').pop() || 'base.html';
+    const mapa = {
+        'base.html': 'inicio',
+        'productos.html': 'productosLink',
+        'stock.html': 'stockLink',
+        'inventario.html': 'inventarioLink',
+        'informes.html': 'informesLink',
+        'Contacto.html': 'contactoLink',
+        '': 'inicio' // En caso de ser raíz
+    };
+    
+    const enlaceActivo = mapa[nombreArchivo];
+    
+    // Remover clase activa de todos los enlaces
+    document.querySelectorAll('nav a').forEach(link => {
+        link.classList.remove('activo');
+    });
+    
+    // Agregar clase activa al enlace correspondiente
+    if(enlaceActivo){
+        const elemento = document.getElementById(enlaceActivo);
+        if(elemento){
+            elemento.classList.add('activo');
+        } else if(enlaceActivo === 'inicio'){
+            // Para el inicio, marcar el primer enlace o el que dice "Inicio"
+            const inicioLink = Array.from(document.querySelectorAll('nav a')).find(a => 
+                a.textContent.trim() === 'Inicio' || a.href.includes('base.html')
+            );
+            if(inicioLink) inicioLink.classList.add('activo');
+        }
+    }
+}
+
+// Ejecutar al cargar la página
+document.addEventListener('DOMContentLoaded', function(){
+    updateMenuByRole();
+    marcarPaginaActiva();
+});
+
+function cerrarSesion(){
+    localStorage.removeItem('sesionActiva');
+    localStorage.removeItem('mensajeLogin');
+    localStorage.removeItem('rol');
+    localStorage.removeItem('usuarioNombre');
+    window.location.href = 'base.html';
+}
+</script>
+
+</body>
+</html>

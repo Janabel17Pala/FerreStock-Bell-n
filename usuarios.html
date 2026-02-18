@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h2>Gestión de Usuarios</h2>
+
+<form method="POST">
+<input name="usuario" placeholder="Usuario">
+<input name="clave" placeholder="Clave">
+<select name="rol">
+<option>admin</option>
+<option>empleado</option>
+</select>
+<button>Registrar</button>
+</form>
+
+<ul>
+{% for u in usuarios %}
+<li>{{u[0]}} - {{u[2]}}</li>
+{% endfor %}
+</ul>
+
+{% endblock %}
